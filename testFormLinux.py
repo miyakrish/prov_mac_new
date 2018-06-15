@@ -933,9 +933,7 @@ class MainWindow(QMainWindow):
     '''
     def checkprocess(self):
         listApp=['Google Chrome','firefox','Skype', 'TeamViewer']
-        print ("PROCESS BASSSS")
         for proc in psutil.process_iter():
-            print (proc.name())
             if proc.name() in listApp:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Warning)       
@@ -949,8 +947,8 @@ class MainWindow(QMainWindow):
                 msg.exec_()
                 return True
 
+    """
     def check_external_storage(self):
-        """Method to get the external storage plugin. This is for Mac"""
         global DEVICES
         usb_command = "system_profiler SPUSBDataType"
         pattern = "        \w+[\s\w]+:"
@@ -962,6 +960,29 @@ class MainWindow(QMainWindow):
         print(DEVICES)
         print(new_devs)
         if new_devs > DEVICES:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)       
+            msg.setInformativeText("External device Plugged in")
+            msg.setWindowTitle("ERROR!!!")
+            msg.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint) #added by RSR
+            #msg.setDetailedText("The details are as follows:")
+            msg.setStandardButtons(QMessageBox.Ok)            
+            msg.setText("Looks like you have plugged in a new device. Please dont till you have finished the exam. Please remove to continue")
+            msg.show()
+            msg.exec_()
+            return True
+    """
+
+    def check_external_storage(self):
+        usb_command = "diskutil list"
+        pattern = "\(external"
+        usb_proc = subprocess.Popen(usb_command, stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = usb_proc.communicate()
+
+        external = re.search(pattern, str(stdout))
+
+        if external:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)       
             msg.setInformativeText("External device Plugged in")
@@ -1748,13 +1769,26 @@ if __name__ == "__main__":
         rVal=NumOfAppOpen.process_exists()
 
         # Check external storage    
-        usb_command = "system_profiler SPUSBDataType"
-        pattern = "        \w+[\s\w]+:"
+        usb_command = "diskutil list"
+        pattern = "\(external"
         usb_proc = subprocess.Popen(usb_command, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE, shell=True)
         stdout, stderr = usb_proc.communicate()
-        print (stdout)
-        DEVICES = re.findall(pattern, str(stdout))
+
+        external = re.search(pattern, str(stdout))
+        if external:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)       
+            msg.setInformativeText("External device Plugged in")
+            msg.setWindowTitle("ERROR!!!")
+            #msg.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint) #added by RSR
+            #msg.setDetailedText("The details are as follows:")
+            msg.setStandardButtons(QMessageBox.Ok)            
+            msg.setText("Looks like you have plugged in a new device. Please dont till you have finished the exam. Please remove to continue")
+            msg.show()
+            msg.exec_()
+            sys.exit(1)
+
         mac_keys_remap()
         if rVal == True:
             print("yes find app")
