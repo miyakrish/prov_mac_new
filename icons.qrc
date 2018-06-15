@@ -1,0 +1,14 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>icons/Prov_logo.png</file>
+	<file>icons/ProvLogo.png</file>
+    <file>icons/close.png</file>
+    <file>icons/search.png</file>
+	<file>icons/success.png</file>
+	<file>icons/favicon.ico</file>
+	<file>icons/Prov_logo_main.png</file>
+	<file>icons/ProvLogoMain.png</file>
+	<file>icons/Prov_logo_main1.png</file>
+    
+</qresource>
+</RCC>

@@ -1,0 +1,19 @@
+Restrictions:
+  application:
+  - {id: '9', value: Notepad}
+  bookmarks:
+  - {id: '7', value: 'https://www.tutorialspoint.com/'}
+  - {id: '8', value: 'https://www.javatpoint.com/'}
+  control:
+  - {id: '5', value: Ctrl+C}
+  - {id: '6', value: Alt}
+  port:
+  - {id: '3', value: USB}
+  - {id: '4', value: HDMI}
+  website:
+  - {id: '1', value: www.facebook.com}
+  - {id: '2', value: www.provnow.com}
+access_id: 310
+rule_id: '1'
+rule_name: basic
+status: success
