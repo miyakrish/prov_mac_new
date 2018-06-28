@@ -326,42 +326,30 @@ def mac_keys_remap(map=True):
             print (stdout)
 
 class NumOfAppOpen(QMessageBox):
-    listApp=['Chrome','firefox','Skype', 'TeamViewer']
+    
     def __init__(self,parent=None):
         super(NumOfAppOpen,self).__init__(parent)
         pass  
         
     def process_exists(self):
-        #i = psutil.pids()
-        logger.error('in thread {} is This:'.format(self.__class__) )
-        logger.error("hello i am in thread Run Function")
+        listApp=['Chrome','firefox','Skype', 'TeamViewer']
         for proc in psutil.process_iter():
-            try:
-                if proc.name() != u"":
-                    logger.error(proc.name)
-                    #print (proc.cmdline())
-            except psutil.AccessDenied:
-                logger.error("Permission error or access denied on process")
-        with open("ApplicationRuning.log") as openfile:
-            for line in openfile:
-                for part in line.split():            
-                    for i in range(0,len(self.listApp)):
-                        if '%(asctime)s' and self.listApp[i] in part:
-                            print (part)
-                            #pdb.set_trace()
-                            msg = QMessageBox()
-                            msg.setIcon(QMessageBox.Warning)       
-                            msg.setInformativeText("Kindly Close The Application")
-                            msg.setWindowTitle("ERROR!!!")
-                            msg.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint) #added by RSR
-                            #msg.setDetailedText("The details are as follows:")
-                            msg.setStandardButtons(QMessageBox.Ok)            
-                            msg.setText("Looks like  application {} is Open".format(self.listApp[i].upper()))
-                            msg.show()
-                            msg.exec_()
-                            return True
-                        
-                del(part)
+            if proc.name() in listApp:
+                #pdb.set_trace()
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)       
+                msg.setInformativeText("Kindly Close The Application")
+                msg.setWindowTitle("ERROR!!!")
+                msg.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint) #added by RSR
+                #msg.setDetailedText("The details are as follows:")
+                msg.setStandardButtons(QMessageBox.Ok)            
+                msg.setText("Looks like  application {} is Open".format(proc.name().upper()))
+                msg.show()
+                msg.exec_()
+                try:
+                    proc.terminate()
+                except:
+                    pass
     
 class AccessCode(QDialog):
     accessCode=[]
@@ -372,32 +360,16 @@ class AccessCode(QDialog):
         self.uiAc=Ui_Dialog()
         self.uiAc.setupUi(self)
         self.options=options
-        self.setWindowTitle(" ")
+        self.setWindowTitle("ACCESS CODE")
         logger.debug("value of OPTIONS in init {}".format(options))
-        #pdb.set_trace()        
-        #self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint) #added by RSR
-        #self.setWindowFlags(self.windowDeactivate) 
-        #very important remove x button of window
-        #self.setWindowFlags(self.windowFlags() & ~Qt.CustomizeWindowHint & Qt.WindowTitleHint) 
-        
-        #self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint )
-        # enable custom window hint
         self.setWindowFlags( QtCore.Qt.CustomizeWindowHint | QtCore.Qt.WindowTitleHint)
-
-        # disable (but not hide) close button
-        #self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowCloseButtonHint)
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint) #added by RSR
-        
-        #self.setWindowFlags(self.windowFlags() | Qt.WindowCloseButtonHint)
-        #self.setWindowFlags(self.windowFlags())
         self.resize(300,300)        
         self.uiAc.pushButtonSubmit.clicked.connect(self.submitAcode)
-        self.uiAc.lineEdit.textChanged.connect(self.getAccessCode)
-        #self.lineEdit.editingFinished.connect(self.getAccessCode)
-        #self.uiAc.pushButtonSubmit.clicked.connect(MainWindow.callMainWindow)           
+        self.uiAc.lineEdit.textChanged.connect(self.getAccessCode)          
         self.setModal(True)
         self.show()
-        #self.setUpParameter()
+
     def keyPressEvent(self,event):  
         
         if event.key()+1 == Qt.Key_Enter:
@@ -945,6 +917,10 @@ class MainWindow(QMainWindow):
                 msg.setText("Looks like  application {} is Open".format(proc.name().upper()))
                 msg.show()
                 msg.exec_()
+                try:
+                    proc.terminate()
+                except:
+                    pass
                 return True
 
     """
